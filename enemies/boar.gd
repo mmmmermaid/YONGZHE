@@ -68,6 +68,12 @@ func get_next_state(state: State) -> int:
 	return StateMachine.KEEP_CURRENT
 
 func transition_state(from: State, to: State) -> void:
+	#print("[%s] %s => %s" % [
+		#Engine.get_physics_frames(),
+		#State.keys()[from] if from != -1 else "<START>",
+		#State.keys()[to],
+	#])
+
 	match to:
 		State.IDLE:
 			animation_player.play("idle")

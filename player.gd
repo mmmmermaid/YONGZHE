@@ -47,7 +47,8 @@ var is_first_tick := false
 var is_combo_requested := false
 var pending_damage: Damage
 var fall_from_y: float
-# 延迟加载的节点
+var interacting_with: Array[Interactable]
+
 @onready var graphics: Node2D = $Graphics
 @onready var animation_player = $AnimationPlayer
 @onready var coyote_timer: Timer = $CoyoteTimer
@@ -59,6 +60,7 @@ var fall_from_y: float
 @onready var stats: Node = $Stats
 @onready var invinciblet_timer: Timer = $InvincibletTimer
 @onready var slide_request_timer: Timer = $SlideRequestTimer
+@onready var interaction_icon: AnimatedSprite2D = $InteractionIcon
 
 # 处理未处理的输入
 func _unhandled_input(event: InputEvent) -> void:
@@ -76,8 +78,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("slide"):
 		slide_request_timer.start()
 		
+	if event.is_action_pressed("interact") and interacting_with:
+		interacting_with.back().interact()
+	
 # 根据当前状态和时间增量执行物理更新
 func tick_physics(state: State, delta: float) -> void:
+	interaction_icon.visible = not interacting_with.is_empty()
+	
 	if invinciblet_timer.time_left > 0:
 		graphics.modulate.a = sin(Time.get_ticks_msec() / 20) * 0.5 + 0.5
 	else :
@@ -163,6 +170,16 @@ func stand(gravity:float, delta: float) -> void:
 
 func die() -> void:
 	get_tree().reload_current_scene()
+
+func register_interactable(v: Interactable) -> void:
+	if state_machine.current_state == State.DYING:
+		return
+	if  v in interacting_with:
+		return
+	interacting_with.append(v)
+
+func unregister_interactable(v: Interactable) -> void:
+	interacting_with.erase(v)
 
 # 根据当前状态确定下一个状态
 func get_next_state(state: State) -> int:
@@ -332,6 +349,7 @@ func transition_state(from: State, to: State) -> void:
 		State.DYING:
 			animation_player.play("die")
 			invinciblet_timer.stop()
+			interacting_with.clear()
 		
 		State.SLIDING_START:
 			animation_player.play("sliding_start")

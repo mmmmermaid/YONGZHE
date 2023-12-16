@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d05gmyhfa16ot"]
+[gd_scene load_steps=11 format=3 uid="uid://d05gmyhfa16ot"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_2744b"]
 [ext_resource type="PackedScene" uid="uid://bw5gfkxm4qahp" path="res://player.tscn" id="2_pqqgc"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cppumqgfvgqva" path="res://assets/Background/Background.png" id="4_a3bls"]
 [ext_resource type="Texture2D" uid="uid://blnbiv20fqdl3" path="res://assets/Trees/Background.png" id="5_rujvv"]
 [ext_resource type="PackedScene" uid="uid://c5aa6dccplaj2" path="res://enemies/boar.tscn" id="6_1jmgs"]
+[ext_resource type="Script" path="res://classes/Interactable.gd" id="7_abwtk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_44c85"]
 texture = ExtResource("2_y33lw")
@@ -465,6 +466,9 @@ terrain_set_0/terrain_1/name = "Leaves"
 terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
 sources/0 = SubResource("TileSetAtlasSource_44c85")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ooys2"]
+size = Vector2(11.5, 17)
+
 [node name="World" type="Node2D"]
 script = ExtResource("1_2744b")
 metadata/_edit_vertical_guides_ = []
@@ -671,3 +675,19 @@ position = Vector2(487, -69)
 
 [node name="Boar3" parent="." instance=ExtResource("6_1jmgs")]
 position = Vector2(1082, 138)
+
+[node name="Mushroom" type="Area2D" parent="."]
+position = Vector2(152, 135)
+script = ExtResource("7_abwtk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mushroom"]
+position = Vector2(-0.75, -1)
+shape = SubResource("RectangleShape2D_ooys2")
+
+[node name="Vegatable" type="Area2D" parent="."]
+position = Vector2(152, 135)
+script = ExtResource("7_abwtk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Vegatable"]
+position = Vector2(-80, -1)
+shape = SubResource("RectangleShape2D_ooys2")
